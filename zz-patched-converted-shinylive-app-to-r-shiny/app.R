@@ -76,26 +76,28 @@ server <- function(input, output) {
                         "grid", "methods", "splines", "stats", "stats4",
                         "tools", "utils", "parallel", "webr"))
       incProgress(2 / 5)
-      
+
       deps <- tools::package_dependencies(packages = rownames(webr_info),
                                           db = webr_info, recursive = TRUE)
       incProgress(2 / 5)
-      
+
       deps <- tibble(
         Package = names(deps),
         Available = deps |> map(\(x) all(x %in% avail_pkgs)),
         Depends = deps,
-        Missing = deps |> map(\(x) x[!(x %in% avail_pkgs)]),
+        Missing = deps |> map(\(x) x[!(x %in% avail_pkgs)])
       )
-      incProgress(1 / 5)
       
+      incProgress(1 / 5)
+
       package_table <- webr_info |>
         select(c("Package", "Version", "Repository")) |>
         left_join(deps, by = "Package") |>
         arrange(Package)
-      names(package_table) <- c("Package", "Version", "Available", "Depends",
-                                "Missing")
       
+      names(package_table) <- c("Package", "Version", "Repository",
+                                "Available", "Depends",
+                                "Missing")
       list(
         table = package_table,
         n_built = dim(package_table)[1],
@@ -106,15 +108,15 @@ server <- function(input, output) {
     detail = "This may take a little while...",
     value = 0
   )
-  
+
   output$built <- renderText({
     res$n_built
   })
-  
+
   output$available <- renderText({
     res$n_avail
   })
-  
+
   output$webr_pkgs <- renderDT(
     datatable(
       res$table,
@@ -155,3 +157,4 @@ server <- function(input, output) {
 }
 
 shinyApp(ui = ui, server = server)
+
