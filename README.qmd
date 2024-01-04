@@ -1,4 +1,8 @@
-# My Project
+---
+title: "My Project"
+format: gfm
+engine: knitr
+---
 
 # Peeking at an R Shinylive App Source
 
